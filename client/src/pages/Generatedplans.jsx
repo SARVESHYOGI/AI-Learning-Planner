@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import PlanPage from "./PlanPage";
 
 
-const SQLKit = () => {
+const Generatedplans = () => {
     const plan = useSelector((state) => state.plan.plan);
     console.log("Plan from Redux store:", typeof plan);
     console.log("Plan from Redux store:", plan.plan);
@@ -118,4 +118,4 @@ const SQLKit = () => {
     );
 };
 
-export default SQLKit;
+export default Generatedplans;

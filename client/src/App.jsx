@@ -4,7 +4,7 @@ import Questionnaire from "./components/Questionnaire";
 import Home from "./pages/Home";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
-import SQLKit from "./pages/SQLKit";
+import Generatedplans from "./pages/Generatedplans";
 import PlanPage from "./pages/PlanPage";
 import NoPage from "./pages/NoPage";
 import DashBoard from "./pages/DashBoard";
@@ -30,7 +30,7 @@ function App() {
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/register" element={<Register />} />
           <Route path="/questionnaire" element={<Questionnaire />} />
-          <Route path="/generatedplans" element={<SQLKit />} />
+          <Route path="/generatedplans" element={<Generatedplans />} />
           <Route path="/seeplan/:id" element={<PlanPage />} />
           <Route path="/trackingplan" element={<TrackPlan />} />
           <Route path="/*" element={<NoPage />} />

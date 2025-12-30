@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import SavedPlan from '../components/SavedPlan'
+import GeneratedPlan from '../components/GeneratedPlan'
 import toast from 'react-hot-toast'
 import Loading from '../components/Loading'
 import { BACKENDURL } from '../App'
@@ -105,7 +105,7 @@ function DashBoard() {
 
 
     return (
-        <div className="container mx-auto px-4 py-10 max-w-3xl text-white">
+        <div className="mx-auto px-4 py-10 max-w-5xl text-white">
             <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700 p-6 sm:p-8 space-y-6 sm:space-y-8">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
                     <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight text-center sm:text-left">
@@ -130,7 +130,7 @@ function DashBoard() {
                             My Generated Plans
                         </h2>
                         {plans && plans.length > 0 ? (
-                            <SavedPlan deleteplan={deleteplan} plans={plans} trackplan={trackplan} />
+                            <GeneratedPlan deleteplan={deleteplan} plans={plans} trackplan={trackplan} />
                         ) : (
                             <div className="text-center text-gray-300 py-6 sm:py-8">
                                 No plans generated yet

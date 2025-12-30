@@ -5,7 +5,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Typography from '@mui/material/Typography';
 
-function SavedPlan(props) {
+function GeneratedPlan(props) {
     const { plans, deleteplan, trackplan } = props;
     // const white = 'white';
     console.log(plans);
@@ -147,4 +147,4 @@ function SavedPlan(props) {
     );
 }
 
-export default SavedPlan
+export default GeneratedPlan
