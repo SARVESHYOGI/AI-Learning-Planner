@@ -42,165 +42,83 @@ const TrackPlan = () => {
         fetchTrackPlans();
     }, []);
 
-    const handleCompletionChange = async (planId, planType, week, isCompleted) => {
+    const handleCompletionChange = async (planId, weekNumber, isCompleted) => {
         try {
-            await axios.patch(`${BACKENDURL}/track/updateCompletion`, {
-                planId, planType, week, isCompleted
-            }, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-
-            setTrackPlans(prev => prev.map(trackPlan => {
-                if (trackPlan.plan?._id === planId) {
-                    return {
-                        ...trackPlan,
-                        plan: {
-                            ...trackPlan.plan,
-                            [planType]: {
-                                ...trackPlan.plan[planType],
-                                [week]: {
-                                    ...trackPlan.plan[planType][week],
-                                    isCompleted
-                                }
-                            }
-                        }
-                    };
+            await axios.patch(
+                `${BACKENDURL}/track/updateCompletion`,
+                { planId, weekNumber, isCompleted },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
                 }
-                return trackPlan;
-            }));
+            );
+
+            setTrackPlans(prev =>
+                prev.map(tp => {
+                    if (tp.plan?._id !== planId) return tp;
+
+                    return {
+                        ...tp,
+                        plan: {
+                            ...tp.plan,
+                            weeks: tp.plan.weeks.map(w =>
+                                w.weekNumber === weekNumber
+                                    ? { ...w, isCompleted }
+                                    : w
+                            ),
+                        },
+                    };
+                })
+            );
         } catch (err) {
             console.error("Update failed:", err);
-            alert(`Update failed: ${err.response?.data?.message || err.message}`);
+            alert(err.response?.data?.message || err.message);
         }
     };
 
-    const renderWeek = (plan, planType, week, weekData) => {
-        if (!weekData) return null;
 
-        return (
-            <Accordion
-                key={`${planType}-${week}`}
-                sx={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: '8px',
-                    marginBottom: '12px',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                    '&:before': { display: 'none' },
-                }}
-            >
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon sx={{ color: '#ffffff' }} />}
-                    sx={{
-                        '& .MuiAccordionSummary-content': {
-                            alignItems: 'center',
-                        },
-                        padding: '12px 16px',
-                        minHeight: '56px',
-                    }}
-                >
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                        alignItems: 'center'
-                    }}>
-                        <Typography variant="subtitle1" sx={{
-                            fontWeight: 600,
-                            color: '#ffffff'
-                        }}>
-                            {week.replace('week', 'Week ')}
-                        </Typography>
-                        <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '24px'
-                        }}>
-                            <Typography variant="body2" sx={{
-                                color: '#bbbbbb',
-                                fontWeight: 500
-                            }}>
-                                Difficulty: <span style={{ color: '#ffffff' }}>{weekData.difficultyLevel}</span>
-                            </Typography>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={weekData.isCompleted || false}
-                                        onChange={(e) => {
-                                            e.stopPropagation();
-                                            handleCompletionChange(plan._id, planType, week, e.target.checked);
-                                        }}
-                                        sx={{
-                                            color: '#4caf50',
-                                            '&.Mui-checked': {
-                                                color: '#4caf50',
-                                            },
-                                        }}
-                                    />
-                                }
-                                label={
-                                    <Typography variant="body2" sx={{
-                                        color: '#bbbbbb',
-                                        fontWeight: 500
-                                    }}>
-                                        Completed
-                                    </Typography>
-                                }
-                                sx={{ marginRight: 0 }}
-                            />
-                        </div>
-                    </div>
-                </AccordionSummary>
-                <AccordionDetails sx={{
-                    padding: '16px 24px',
-                    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                    borderTop: '1px solid rgba(255, 255, 255, 0.1)'
-                }}>
-                    <div style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '12px',
-                        color: '#ffffff'
-                    }}>
-                        <Typography variant="body1">
-                            <span style={{ fontWeight: 600, color: '#bbbbbb' }}>Topics:</span> {weekData.topicsCovered?.join(', ') || 'None'}
-                        </Typography>
-                        <Typography variant="body1">
-                            <span style={{ fontWeight: 600, color: '#bbbbbb' }}>Exercises:</span> {weekData.exercises?.join(', ') || 'None'}
-                        </Typography>
-                        <Typography variant="body1">
-                            <span style={{ fontWeight: 600, color: '#bbbbbb' }}>Time Commitment:</span> {weekData.timeCommitment || 'Not specified'}
-                        </Typography>
-                        <Typography variant="body1">
-                            <span style={{ fontWeight: 600, color: '#bbbbbb' }}>Resources:</span>
-                            {weekData.resources?.map((resource, index) => (
-                                <span key={index}>
-                                    <a
-                                        href={resource}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{
-                                            color: '#4caf50',
-                                            textDecoration: 'none',
-                                            marginLeft: index > 0 ? '4px' : '0',
-                                            '&:hover': {
-                                                textDecoration: 'underline'
-                                            }
-                                        }}
-                                    >
-                                        {resource}
-                                    </a>
-                                    {index < weekData.resources.length - 1 ? ', ' : ''}
-                                </span>
-                            )) || ' None'}
-                        </Typography>
-                    </div>
-                </AccordionDetails>
-            </Accordion>
-        );
-    };
+    const renderWeek = (plan, week) => (
+        <Accordion
+            key={week.weekNumber}
+            sx={{
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '8px',
+                marginBottom: '12px',
+                '&:before': { display: 'none' },
+            }}
+        >
+            <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: '#fff' }} />}>
+                <Typography sx={{ fontWeight: 600, color: '#fff' }}>
+                    Week {week.weekNumber}
+                </Typography>
+
+                <FormControlLabel
+                    sx={{ marginLeft: 'auto' }}
+                    control={
+                        <Checkbox
+                            checked={week.isCompleted || false}
+                            onChange={(e) => {
+                                e.stopPropagation();
+                                handleCompletionChange(plan._id, week.weekNumber, e.target.checked);
+                            }}
+                        />
+                    }
+                    label="Completed"
+                />
+            </AccordionSummary>
+
+            <AccordionDetails sx={{ color: '#fff' }}>
+                <Typography><strong>Difficulty:</strong> {week.difficultyLevel}</Typography>
+                <Typography><strong>Topics:</strong> {week.topicsCovered.join(', ')}</Typography>
+                <Typography><strong>Exercises:</strong> {week.exercises.join(', ')}</Typography>
+                <Typography><strong>Time:</strong> {week.timeCommitment}</Typography>
+                <Typography><strong>Resources:</strong> {week.resources.join(', ')}</Typography>
+            </AccordionDetails>
+        </Accordion>
+    );
+
 
     if (loading) return (
         <div style={{
@@ -274,21 +192,10 @@ const TrackPlan = () => {
                             }
                         }}
                     >
-                        <Typography variant="h5" sx={{
-                            fontWeight: 600,
-                            color: '#ffffff',
-                            flexGrow: 1
-                        }}>
-                            {trackPlan.plan?.targetJobTitle || 'Untitled Plan'}
+                        <Typography variant="h5" sx={{ color: '#fff' }}>
+                            {trackPlan.plan.subject.toUpperCase()} – {trackPlan.plan.planDuration} Week Plan
                         </Typography>
-                        <div style={{ display: 'flex', gap: '16px' }}>
-                            <Typography variant="body2" sx={{ color: '#bbbbbb' }}>
-                                <span style={{ fontWeight: 600 }}>Focus:</span> {trackPlan.plan?.focusArea || 'N/A'}
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: '#bbbbbb' }}>
-                                <span style={{ fontWeight: 600 }}>DB:</span> {trackPlan.plan?.preferredSQLDatabase?.join(', ') || 'N/A'}
-                            </Typography>
-                        </div>
+
                     </AccordionSummary>
 
                     <AccordionDetails sx={{
@@ -298,32 +205,12 @@ const TrackPlan = () => {
                         {trackPlan.plan ? (
                             <>
                                 <div style={{ marginTop: '16px' }}>
-                                    <Typography variant="h6" sx={{
-                                        fontWeight: 600,
-                                        color: '#ffffff',
-                                        marginBottom: '16px',
-                                        paddingBottom: '8px',
-                                        borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
-                                    }}>
-                                        4-Week Plan
-                                    </Typography>
-                                    {trackPlan.plan["4WeekPlan"] && Object.entries(trackPlan.plan["4WeekPlan"])
-                                        .map(([week, weekData]) => renderWeek(trackPlan.plan, "4WeekPlan", week, weekData))}
+
+                                    {trackPlan.plan?.weeks?.map((week) =>
+                                        renderWeek(trackPlan.plan, week)
+                                    )}
                                 </div>
 
-                                <div style={{ marginTop: '32px' }}>
-                                    <Typography variant="h6" sx={{
-                                        fontWeight: 600,
-                                        color: '#ffffff',
-                                        marginBottom: '16px',
-                                        paddingBottom: '8px',
-                                        borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
-                                    }}>
-                                        8-Week Plan
-                                    </Typography>
-                                    {trackPlan.plan["8WeekPlan"] && Object.entries(trackPlan.plan["8WeekPlan"])
-                                        .map(([week, weekData]) => renderWeek(trackPlan.plan, "8WeekPlan", week, weekData))}
-                                </div>
                             </>
                         ) : (
                             <Alert severity="warning" sx={{

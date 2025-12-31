@@ -123,20 +123,23 @@ function DashBoard() {
                         </Link>
                     </div>
 
-                    <div className="flex-1 bg-gray-50 p-4 shadow-sm bg-transparent rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100">
-                        <h2 className="text-lg font-semibold text-whitemb-4">
-                            My Generated Plans
-                        </h2>
-                        {plans ? (<>
-                            <SavedPlan deleteplan={deleteplan} plans={plans} trackplan={trackplan} />
-                        </>) : (
-                            <div className="text-center text-gray-500">
-                                No plans generated yet
-                            </div>
-                        )}
 
-                    </div>
                 </div>
+
+            </div>
+            <div className="flex-1 bg-gray-50 p-4 shadow-sm bg-transparent rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100">
+                <h2 className="text-lg font-semibold text-whitemb-4">
+                    My Generated Plans
+                </h2>
+                {plans ? (<>
+                    {/* <div>hi</div> */}
+                    <SavedPlan deleteplan={deleteplan} plans={plans} trackplan={trackplan} />
+                </>) : (
+                    <div className="text-center text-gray-500">
+                        No plans generated yet
+                    </div>
+                )}
+
             </div>
         </div>
     )

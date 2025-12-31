@@ -14,8 +14,8 @@ import Loading from "./components/Loading";
 import TrackPlan from "./pages/TrackPlan";
 
 
-// export const BACKENDURL = "http://localhost:5000";
-export const BACKENDURL = "https://ai-powered-sql-prep.onrender.com";
+export const BACKENDURL = "http://localhost:5000";
+// export const BACKENDURL = "https://ai-powered-sql-prep.onrender.com";
 
 function App() {
 
