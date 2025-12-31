@@ -90,6 +90,7 @@ const generatePlan = async (req, res) => {
   if (!userQuestionAnswerResponse) {
     return res.status(400).json({ error: "User question and answer response is required" });
   }
+  const duration = Number(userQuestionAnswerResponse?.formValues?.userPlanDuration) || 2;
 
   const prompt = `
 You are an expert personalized learning coach and curriculum designer.
@@ -110,7 +111,9 @@ ${userQuestionAnswerResponse}
     "weekN": { ... }
   }
 }
-3. Create exactly ${userQuestionAnswerResponse.userPlanDuration} weekly entries (week1 .. week${userQuestionAnswerResponse.userPlanDuration}). If the user indicated a pace (hours/day), use it to estimate timeCommitment per week.
+3. 3. Create EXACTLY ${duration} weeks.
+- If you generate more than ${duration} weeks, the response is INVALID.
+- Do NOT create week${duration + 1} or beyond.
 4. Tailor topics, exercises and resources to the subject and user's proficiency.
 5. For resources include at least 1 free tutorial/link or platform (e.g., "LeetCode", "GeeksforGeeks", "freeCodeCamp", "Official Docs"). Short URLs or resource names are fine.
 6. Use difficultyLevel values: "Beginner", "Intermediate", or "Advanced".

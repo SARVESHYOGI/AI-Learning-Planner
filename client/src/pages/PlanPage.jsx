@@ -65,7 +65,7 @@ function PlanPage() {
                     </div>
                 ))}
             </div>
-            <div className='bg-green-500 p-2 rounded-xl w-fit'><Link to='/generatedplans'>Go back</Link></div>
+            <div className='bg-green-500 p-2 rounded-xl w-fit'><Link to='/questionnaire'>Go back</Link></div>
         </div>
     );
 }

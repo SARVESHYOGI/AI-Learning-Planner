@@ -15,10 +15,7 @@ const questionVariants = {
     exit: (direction) => ({ x: direction < 0 ? 100 : -100, opacity: 0 }),
 };
 
-const progressBarVariants = {
-    initial: { width: "0%" },
-    animate: { width: "100%" },
-};
+
 
 const Questionnaire = () => {
     const [loading, setLoading] = useState(false);
@@ -34,7 +31,6 @@ const Questionnaire = () => {
         handleSubmit,
         formState: { errors },
         trigger,
-        getValues,
     } = useForm();
 
     const navigate = useNavigate();
@@ -141,20 +137,43 @@ const Questionnaire = () => {
 
     if (!started) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-gray-900 p-4">
-                <div className="w-full max-w-xl bg-gray-800 p-6 rounded-md shadow">
-                    <h1 className="text-2xl text-blue-300 font-semibold mb-4">What do you want to learn?</h1>
+            <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black px-4">
+                <div className="
+        w-full max-w-xl
+        bg-slate-900/70 backdrop-blur-xl
+        border border-slate-700/40
+        rounded-2xl p-8 shadow-2xl
+      ">
+                    <h1 className="text-2xl font-bold text-blue-400 mb-2">
+                        What do you want to learn?
+                    </h1>
+
+                    <p className="text-slate-400 mb-6">
+                        Tell us the topic and we’ll generate a personalized study plan for you.
+                    </p>
+
                     <input
                         type="text"
                         value={topic}
                         onChange={(e) => setTopic(e.target.value)}
-                        placeholder="e.g., Data Structures, Operating Systems, JavaScript"
-                        className="w-full bg-gray-700 rounded-md text-white py-3 px-4 mb-4 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        placeholder="e.g. DSA, Operating Systems, JavaScript"
+                        className="
+            w-full rounded-lg px-4 py-3
+            bg-slate-800 text-white
+            border border-slate-700
+            focus:outline-none focus:ring-2 focus:ring-blue-500
+          "
                     />
-                    <div className="flex justify-end">
+
+                    <div className="flex justify-end mt-6">
                         <button
                             onClick={handleStart}
-                            className="px-6 py-2 bg-blue-600 rounded-md hover:bg-blue-700"
+                            className="
+              bg-blue-600 hover:bg-blue-500
+              px-6 py-2 rounded-lg font-semibold
+              shadow-lg shadow-blue-600/30
+              transition transform hover:scale-105
+            "
                         >
                             Start
                         </button>
@@ -163,6 +182,7 @@ const Questionnaire = () => {
             </div>
         );
     }
+
 
     if (!formFields || formFields.length === 0) {
         return (
@@ -176,17 +196,13 @@ const Questionnaire = () => {
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-900"
+            className="flex items-center justify-center min-h-screen px-4 bg-gradient-to-br from-slate-950 via-slate-900 to-black"
         >
             <div className="w-full max-w-2xl">
-                {/* Progress Bar */}
-                <div className="h-2 bg-gray-700 rounded-full mb-8 overflow-hidden">
+
+                {/* Progress */}
+                <div className="h-2 bg-slate-800 rounded-full mb-8 overflow-hidden">
                     <motion.div
-                        initial="initial"
-                        animate="animate"
-                        variants={progressBarVariants}
-                        transition={{ duration: 0.5 }}
                         className="h-full bg-blue-500"
                         style={{
                             width: `${((currentQuestion + 1) / formFields.length) * 100}%`,
@@ -195,7 +211,7 @@ const Questionnaire = () => {
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="relative h-96 overflow-hidden">
+                    <div className="relative h-[22rem]">
                         <AnimatePresence custom={direction}>
                             <motion.div
                                 key={currentQuestion}
@@ -205,88 +221,73 @@ const Questionnaire = () => {
                                 animate="center"
                                 exit="exit"
                                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                className="absolute inset-0 flex flex-col items-center justify-center bg-gray-800 rounded-lg p-6 shadow-lg"
+                                className="
+                absolute inset-0
+                bg-slate-900/70 backdrop-blur-xl
+                border border-slate-700/40
+                rounded-2xl p-8 shadow-2xl
+                flex flex-col justify-center
+              "
                             >
-                                <h2 className="text-xl font-semibold mb-6 text-center text-blue-400">
+                                <h2 className="text-xl font-semibold text-center text-teal-400 mb-6">
                                     {formFields[currentQuestion].label}
                                 </h2>
 
+                                {/* INPUT / SELECT */}
                                 {formFields[currentQuestion].type === "select" ? (
                                     <select
-                                        {...register(formFields[currentQuestion].name, {
-                                            required:
-                                                formFields[currentQuestion].required && "This field is required",
-                                        })}
-                                        className="w-full bg-gray-700 rounded-md text-white py-3 px-4 mb-4 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                        defaultValue={getValues(formFields[currentQuestion].name) || ""}
+                                        {...register(formFields[currentQuestion].name, { required: true })}
+                                        className="w-full bg-slate-800 text-white rounded-lg px-4 py-3 border border-slate-700"
                                     >
                                         <option value="">Select an option</option>
-                                        {(formFields[currentQuestion].options || []).map((option) => (
-                                            <option key={option} value={option}>
-                                                {option}
-                                            </option>
+                                        {formFields[currentQuestion].options.map((o) => (
+                                            <option key={o} value={o}>{o}</option>
                                         ))}
                                     </select>
                                 ) : (
                                     <input
-                                        type={
-                                            formFields[currentQuestion].type === "number"
-                                                ? "number"
-                                                : formFields[currentQuestion].type === "email"
-                                                    ? "email"
-                                                    : "text"
-                                        }
-                                        {...register(formFields[currentQuestion].name, {
-                                            required:
-                                                formFields[currentQuestion].required && "This field is required",
-                                        })}
-                                        className="w-full bg-gray-700 rounded-md text-white py-3 px-4 mb-4 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                        placeholder={formFields[currentQuestion].placeholder || ""}
-                                        defaultValue={getValues(formFields[currentQuestion].name) || ""}
+                                        {...register(formFields[currentQuestion].name, { required: true })}
+                                        placeholder={formFields[currentQuestion].placeholder}
+                                        className="w-full bg-slate-800 text-white rounded-lg px-4 py-3 border border-slate-700"
                                     />
                                 )}
 
                                 {errors[formFields[currentQuestion].name] && (
-                                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 text-sm mb-4">
-                                        {errors[formFields[currentQuestion].name].message}
-                                    </motion.p>
+                                    <p className="text-red-400 text-sm mt-2">
+                                        This field is required
+                                    </p>
                                 )}
 
-                                <div className="flex justify-between w-full mt-6">
-                                    <motion.button
+                                {/* Buttons */}
+                                <div className="flex justify-between mt-8">
+                                    <button
                                         type="button"
                                         onClick={handlePrev}
                                         disabled={currentQuestion === 0}
-                                        className={`px-6 py-2 rounded-md ${currentQuestion === 0 ? "bg-gray-600 cursor-not-allowed" : "bg-gray-700 hover:bg-gray-600"
-                                            }`}
-                                        whileHover={currentQuestion > 0 ? { scale: 1.05 } : {}}
-                                        whileTap={currentQuestion > 0 ? { scale: 0.95 } : {}}
+                                        className="
+                    px-6 py-2 rounded-lg
+                    bg-slate-700 hover:bg-slate-600
+                    disabled:opacity-50
+                  "
                                     >
                                         Back
-                                    </motion.button>
+                                    </button>
 
                                     {currentQuestion < formFields.length - 1 ? (
-                                        <motion.button
+                                        <button
                                             type="button"
-                                            onClick={async () => {
-                                                const ok = await trigger(formFields[currentQuestion].name);
-                                                if (ok) handleNext();
-                                            }}
-                                            className="px-6 py-2 bg-blue-600 rounded-md hover:bg-blue-700"
-                                            whileHover={{ scale: 1.05 }}
-                                            whileTap={{ scale: 0.95 }}
+                                            onClick={handleNext}
+                                            className="px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg"
                                         >
                                             Next
-                                        </motion.button>
+                                        </button>
                                     ) : (
-                                        <motion.button
+                                        <button
                                             type="submit"
-                                            className="px-6 py-2 bg-green-600 rounded-md hover:bg-green-700"
-                                            whileHover={{ scale: 1.05 }}
-                                            whileTap={{ scale: 0.95 }}
+                                            className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg"
                                         >
                                             Submit
-                                        </motion.button>
+                                        </button>
                                     )}
                                 </div>
                             </motion.div>
@@ -294,12 +295,13 @@ const Questionnaire = () => {
                     </div>
                 </form>
 
-                <div className="text-center mt-4 text-gray-400">
+                <div className="text-center text-slate-400 mt-4">
                     Question {currentQuestion + 1} of {formFields.length}
                 </div>
             </div>
         </motion.div>
     );
+
 };
 
 export default Questionnaire;

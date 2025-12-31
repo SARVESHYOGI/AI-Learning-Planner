@@ -1,65 +1,35 @@
 import { motion } from "framer-motion";
 
 function Loading() {
-    const progressLineVariants = {
-        start: {
-            width: "0%",
-            transition: {
-                duration: 2,
-                repeat: Infinity,
-                repeatType: "loop",
-                ease: "linear",
-            },
-        },
-        end: {
-            width: "100%",
-            transition: {
-                duration: 2,
-                repeat: Infinity,
-                repeatType: "loop",
-                ease: "linear",
-            },
-        },
-    };
-
     return (
-        <motion.div
-            className="container absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-transparent backdrop-filter backdrop-blur-sm bg-opacity-10 p-4 rounded-md"
-        >
-            {/* Progress line */}
-            <motion.div
-                className="progress-line"
-                variants={progressLineVariants}
-                animate="end"
-            />
-            <StyleSheet />
-        </motion.div>
-    );
-}
+        <div className="fixed inset-0 flex items-center justify-center bg-transparent">
+            <div className="relative w-16 h-16">
 
-/**
- * ==============   Styles   ================
- */
-function StyleSheet() {
-    return (
-        <style>
-            {`
-            .container {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 10px;
-                width: 200px; /* Width of the container */
-                height: 20px; /* Height of the container */
-            }
+                {/* Outer Ring */}
+                <motion.div
+                    className="absolute inset-0 rounded-full border border-slate-700"
+                />
 
-            .progress-line {
-                height: 6px; /* Line thickness */
-                border-radius: 5px;
-                background-color: #ffffff;
-            }
-            `}
-        </style>
+                {/* Orbiting Dot */}
+                <motion.div
+                    className="absolute top-1/2 left-1/2 w-3 h-3 bg-blue-500 rounded-full shadow-[0_0_20px_rgba(59,130,246,0.8)]"
+                    style={{ transformOrigin: "-150% -150%" }}
+                    animate={{ rotate: 360 }}
+                    transition={{
+                        duration: 1.2,
+                        repeat: Infinity,
+                        ease: "linear",
+                    }}
+                />
+
+                {/* Center Dot */}
+                <motion.div
+                    className="absolute top-1/2 left-1/2 w-2 h-2 bg-slate-400 rounded-full -translate-x-1/2 -translate-y-1/2"
+                    animate={{ opacity: [0.4, 1, 0.4] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                />
+            </div>
+        </div>
     );
 }
 
