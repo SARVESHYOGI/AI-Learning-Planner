@@ -6,12 +6,42 @@ import GeneratedPlan from '../components/GeneratedPlan'
 import toast from 'react-hot-toast'
 import Loading from '../components/Loading'
 import { BACKENDURL } from '../App'
+import TimeCard from '../components/TimeCard'
 
 function DashBoard() {
     const [plans, setPlans] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [minLoading, setMinLoading] = useState(false);
+    const [trackplanslength, setTrackPlanslength] = useState([]);
+    useEffect(() => {
+        const fetchTrackPlans = async () => {
+            try {
+                setLoading(true);
+                const response = await axios.get(`${BACKENDURL}/track/trackplan`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+
+                if (!response.data || response.data.length === 0) {
+                    setError('No tracked plans found');
+                    return;
+                }
+
+                console.log("First tracked plan:", response.data[0]);
+
+                setTrackPlanslength(response.data.length);
+            } catch (err) {
+                console.error("Failed to fetch track plans:", err);
+                setError(err.response?.data?.message || err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTrackPlans();
+    }, []);
 
     const deleteplan = async (id) => {
         console.log('Deleting plan with ID:', id);
@@ -139,15 +169,18 @@ shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
 border-white/10
 shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
                         <p className="text-gray-400 text-sm">Tracking Plans</p>
-                        <h2 className="text-3xl font-bold">—</h2>
+                        <h2 className="text-3xl font-bold">{trackplanslength}</h2>
                     </div>
 
-                    <div className=" backdrop-blur-md border rounded-xl p-6 bg-white/5
+                    <div className="backdrop-blur-md border rounded-xl p-6 bg-white/5
 border-white/10
 shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
-                        <p className="text-gray-400 text-sm">Consistency</p>
-                        <h2 className="text-3xl font-bold">🔥</h2>
+                        <p className="text-gray-400 text-sm">Time</p>
+                        <h2 className="text-3xl font-bold">
+                            <TimeCard />
+                        </h2>
                     </div>
+
                 </div>
 
                 {/* Generated Plans */}

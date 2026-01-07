@@ -74,4 +74,21 @@ const logout = async (req, res) => {
     })
 }
 
-module.exports = { register, login, logout, userInf, registerSchema, loginSchema };
+const edituser = async (req, res) => {
+    try {
+        if (!req.userId) {
+            return res.status(400).json({ error: 'User not authenticated' });
+        }
+        const { name, organization } = req.body;
+        const updatedUser = await User.findByIdAndUpdate(
+            req.userId,
+            { name, organization },
+            { new: true }
+        ).select('-password');
+        res.status(200).json({ user: updatedUser });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+module.exports = { register, login, logout, userInf, edituser, registerSchema, loginSchema };

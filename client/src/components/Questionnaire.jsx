@@ -65,7 +65,7 @@ const Questionnaire = () => {
 
             const planDurationField = {
                 name: "userPlanDuration",
-                label: "How long do you want your learning plan to be? (e.g., 4 weeks, 2 months)",
+                label: "How long do you want your learning plan to be? (e.g., 4 for weeks, 2 for weeks)",
                 type: "text",
                 placeholder: "Enter duration in weeks",
                 required: true
@@ -246,7 +246,7 @@ const Questionnaire = () => {
                                     </select>
                                 ) : (
                                     <input
-                                        {...register(formFields[currentQuestion].name, { required: true })}
+                                        {...register(formFields[currentQuestion].name, { required: formFields[currentQuestion].required })}
                                         placeholder={formFields[currentQuestion].placeholder}
                                         className="w-full bg-slate-800 text-white rounded-lg px-4 py-3 border border-slate-700"
                                     />
