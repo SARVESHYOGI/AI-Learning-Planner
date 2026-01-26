@@ -32,9 +32,9 @@ const gettrackplan = async (req, res) => {
 
         const trackplans = await TrackPlan.find({ userId }).lean();
 
-        if (!trackplans || trackplans.length === 0) {
-            return res.status(404).json({ message: "No track plans found" });
-        }
+        // if (!trackplans || trackplans.length === 0) {
+        //     return res.status(404).json({ message: "No track plans found" });
+        // }
 
         const planIds = trackplans.map(tp => tp.planId);
         const plans = await Plan.find({ _id: { $in: planIds } }).lean();

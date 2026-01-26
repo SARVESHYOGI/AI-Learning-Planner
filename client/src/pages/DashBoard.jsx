@@ -24,16 +24,20 @@ function DashBoard() {
                     },
                 });
 
-                if (!response.data || response.data.length === 0) {
-                    setError('No tracked plans found');
-                    return;
-                }
+                // console.log("response", response);
 
-                console.log("First tracked plan:", response.data[0]);
+                // if (!response.data || response.data.length === 0) {
+                //     setError('No tracked plans found');
+                //     setTrackPlanslength(0);
+                //     // return;
+                // }
+
+                // console.log("First tracked plan:", response.data[0]);
 
                 setTrackPlanslength(response.data.length);
             } catch (err) {
                 console.error("Failed to fetch track plans:", err);
+                setTrackPlanslength(0);
                 setError(err.response?.data?.message || err.message);
             } finally {
                 setLoading(false);
@@ -111,7 +115,9 @@ function DashBoard() {
             }
         }
     };
-
+    useEffect(() => {
+        getPlans();
+    }, []);
     useEffect(() => {
         const minLoadingTime = setTimeout(() => {
             setMinLoading(false);
@@ -121,9 +127,7 @@ function DashBoard() {
 
         return () => clearTimeout(minLoadingTime);
     }, []);
-    useEffect(() => {
-        getPlans();
-    }, []);
+
 
     if (loading || minLoading) {
         return <div><Loading /></div>;

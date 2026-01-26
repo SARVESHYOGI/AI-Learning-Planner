@@ -1,10 +1,11 @@
 const { GoogleGenAI } = require("@google/genai");
 const Plan = require("../models/Plan");
+const fetch = require('node-fetch')
 
 const generateQuestion = async (req, res) => {
   try {
     const { topic } = req.body;
-    const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
+
     const prompt = `
 The user wants to learn **${topic}**.  
 Your task is to generate a **dynamic and adaptive questionnaire** that will help create a personalized learning plan for this subject.
@@ -59,21 +60,44 @@ A formFields array with fields like subject, experience, role, jobTitle, compani
 Now generate the **dynamic questionnaire** for the subject: "${topic}".
 `;
 
-    const result = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: prompt }]
-        }
-      ]
+    // GEMINI
+    // const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
+    // const result = await ai.models.generateContent({
+    //   model: "gemini-2.5-flash",
+    //   contents: [
+    //     {
+    //       role: "user",
+    //       parts: [{ text: prompt }]
+    //     }
+    //   ]
+    // });
+    // if (!result || !result.text) {
+    //   throw new Error("No valid response from Google API.");
+    // }
+    // const generatedText = await result.text;
+    // const cleanedText = generatedText.replace(/```json\n|\n```/g, '');
+    // const jsonData = JSON.parse(cleanedText);
+
+    // LOCAL
+    const ollamaRes = await fetch("http://localhost:11434/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "llama3",
+        prompt,
+        stream: false
+      })
     });
-    // console.log(result.text);
-    if (!result || !result.text) {
-      throw new Error("No valid response from Google API.");
+
+    const ollamaData = await ollamaRes.json();
+
+    console.log("Raw Ollama result:", ollamaData);
+
+    if (!ollamaData || typeof ollamaData.response !== "string") {
+      throw new Error("No valid response from Ollama");
     }
-    const generatedText = await result.text;
-    const cleanedText = generatedText.replace(/```json\n|\n```/g, '');
+    const generatedText = ollamaData.response;
+    const cleanedText = generatedText.replace(/```json\n|\n```/g, '').replace(/```/g, "").trim();;
     const jsonData = JSON.parse(cleanedText);
 
     // console.log("Json Data :=> ", jsonData);
@@ -125,23 +149,48 @@ If any user answer is ambiguous or missing, assume the user wants a balanced int
 Return the JSON now.
 `
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
-    const result = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: prompt }]
-        }
-      ]
-    });
-    // console.log(result.text);
-    if (!result || !result.text) {
-      throw new Error("No valid response from Google API.");
-    }
+    // GEMINI
 
-    const generatedText = await result.text;
-    const cleanedText = generatedText.replace(/```json\n|\n```/g, '');
+    // const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
+    // const result = await ai.models.generateContent({
+    //   model: "gemini-2.5-flash",
+    //   contents: [
+    //     {
+    //       role: "user",
+    //       parts: [{ text: prompt }]
+    //     }
+    //   ]
+    // });
+    // console.log(result.text);
+    // if (!result || !result.text) {
+    //   throw new Error("No valid response from Google API.");
+    // }
+    // const generatedText = await result.text;
+    // const cleanedText = generatedText.replace(/```json\n|\n```/g, '');
+    // const jsonData = JSON.parse(cleanedText);
+
+
+    // LOCAL
+
+    const ollamaRes = await fetch("http://localhost:11434/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "llama3",
+        prompt,
+        stream: false
+      })
+    });
+    const ollamaData = await ollamaRes.json();
+    console.log("Raw Ollama result:", ollamaData);
+    if (!ollamaData || typeof ollamaData.response !== "string") {
+      throw new Error("No valid response from Ollama");
+    }
+    const generatedText = ollamaData.response;
+    const cleanedText = generatedText
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
     const jsonData = JSON.parse(cleanedText);
 
     // console.log("Json Data :=> ", jsonData);
