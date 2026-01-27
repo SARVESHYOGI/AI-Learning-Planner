@@ -45,7 +45,7 @@ function DashBoard() {
         };
 
         fetchTrackPlans();
-    }, []);
+    }, [plans]);
 
     const deleteplan = async (id) => {
         console.log('Deleting plan with ID:', id);
@@ -59,7 +59,7 @@ function DashBoard() {
 
             console.log('Plan deleted:', response.data);
             setLoading(false);
-
+            setTrackPlanslength(trackplanslength - 1);
             toast.success("Plan deleted successfully.");
             setPlans(prevPlans => prevPlans.filter(plan => plan._id !== id));
         } catch (err) {
@@ -78,6 +78,7 @@ function DashBoard() {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
             });
+            setTrackPlanslength(trackplanslength + 1);
             console.log("Trackplan from dashboard", response);
             toast.success("Plan added to tracking successfully.");
         } catch (error) {
@@ -118,6 +119,7 @@ function DashBoard() {
     useEffect(() => {
         getPlans();
     }, []);
+
     useEffect(() => {
         const minLoadingTime = setTimeout(() => {
             setMinLoading(false);
