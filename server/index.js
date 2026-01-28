@@ -13,14 +13,30 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors(
-    {
-        // origin: "https://ai-powered-sql-prep.vercel.app",
-        origin: "http://localhost:5173",
-        credentials: true,
-        allowedHeaders: ['Content-Type', 'Authorization']
-    }
-));
+const corsOptions = {
+    origin: function (origin, callback) {
+        // allow requests with no origin (like mobile apps, curl)
+        if (!origin) return callback(null, true);
+
+        const allowed = [
+            "http://localhost:3000",
+            "http://localhost:5173",
+        ];
+
+        if (allowed.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
+
 app.use(express.json());
 app.use(cookieParser());
 // MongoDB Connection
