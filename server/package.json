@@ -25,5 +25,8 @@
     "mongoose": "^8.11.0",
     "node-fetch": "^2.7.0",
     "openai": "^4.86.1"
-  }
+  },
+  "engines": {
+  "node": ">=18"
+}
 }
