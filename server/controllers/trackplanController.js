@@ -1,5 +1,6 @@
 const TrackPlan = require("../models/TrackPlan");
 const Plan = require("../models/Plan");
+const mongoose = require("mongoose");
 
 const addtotrackplan = async (req, res) => {
     try {
@@ -8,14 +9,15 @@ const addtotrackplan = async (req, res) => {
         if (!id) {
             return res.status(400).json({ message: "Plan ID is required" });
         }
-        const existingTrackPlan = await TrackPlan.findOne({ planId: id, userId: req.userId });
+        const planObjectId = new mongoose.Types.ObjectId(id);
+        const existingTrackPlan = await TrackPlan.findOne({ planId: planObjectId, userId: req.userId });
         if (existingTrackPlan) {
             return res.status(400).json({ message: "Plan already tracked" });
         }
         const userId = req.userId;
         const trackPlan = new TrackPlan({
             userId,
-            planId: id
+            planId: planObjectId
         });
         await trackPlan.save();
         console.log("Plan tracked successfully:", trackPlan);
@@ -35,6 +37,9 @@ const gettrackplan = async (req, res) => {
         // if (!trackplans || trackplans.length === 0) {
         //     return res.status(404).json({ message: "No track plans found" });
         // }
+        if (!trackplans.length) {
+            return res.status(200).json([]);
+        }
 
         const planIds = trackplans.map(tp => tp.planId);
         const plans = await Plan.find({ _id: { $in: planIds } }).lean();
@@ -91,18 +96,6 @@ const updateCompletion = async (req, res) => {
     }
 };
 
-
-const getPlan = async (planId) => {
-    console.log('Fetching plan for ID:', planId);
-    try {
-        const plan = await Plan.findById(planId);
-        console.log('Plan data:', plan);
-        return plan;
-    } catch (error) {
-        console.error('Error getting plan:', error);
-        throw new Error('Failed to get plan');
-    }
-}
 
 
 const deleteTrackPlan = async (req, res) => {
