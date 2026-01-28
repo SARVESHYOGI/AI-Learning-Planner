@@ -1,7 +1,7 @@
 const allowedOrigins = [
+    "https://ailearningplan.vercel.app/",
     "http://localhost:3000",
     "http://localhost:5173",
-    "https://ailearningplan.vercel.app/"
 ];
 
 module.exports = {
