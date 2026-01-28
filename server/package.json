@@ -1,11 +1,11 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.local.js",
   "scripts": {
     "test": "jest --runInBand",
-    "dev": "nodemon index.js",
-    "start": "node index.js"
+    "dev": "nodemon server.local.js",
+    "start": "node server.local.js"
   },
   "keywords": [],
   "author": "",
