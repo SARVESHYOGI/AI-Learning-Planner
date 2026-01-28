@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { BACKENDURL } from '../App';
 import {
     Accordion, AccordionSummary, AccordionDetails,
     Typography, Checkbox, FormControlLabel, CircularProgress, Alert
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import api from '../api/axios';
 
 const TrackPlan = () => {
     const [trackPlans, setTrackPlans] = useState([]);
@@ -16,7 +15,7 @@ const TrackPlan = () => {
         const fetchTrackPlans = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${BACKENDURL}/track/trackplan`, {
+                const response = await api.get(`/track/trackplan`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                     },
@@ -44,7 +43,7 @@ const TrackPlan = () => {
     const handleCompletionChange = async (planId, weekNumber, isCompleted) => {
         try {
             console.log("Updating completion:", planId, weekNumber, isCompleted);
-            await axios.patch(`${BACKENDURL}/track/updateCompletion`, {
+            await api.patch(`/track/updateCompletion`, {
                 planId,
                 weekNumber,
                 isCompleted

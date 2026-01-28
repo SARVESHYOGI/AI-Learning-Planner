@@ -32,10 +32,12 @@ const login = async (req, res) => {
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
         const cookiesOption = {
             httpOnly: true,
-            secure: true,
-            sameSite: "None"
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000
         }
         res.cookie('token', token, cookiesOption)
+
         return res.json({
             message: "Login successfully",
             error: false,

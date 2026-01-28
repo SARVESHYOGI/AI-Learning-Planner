@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Loading from "../../components/Loading";
-import { BACKENDURL } from "../../App";
+import api from "../../api/axios";
 
 const Register = () => {
     const [name, setName] = useState("");
@@ -17,8 +16,8 @@ const Register = () => {
     const handleRegister = async () => {
         try {
             setLoading(true);
-            await axios.post(
-                `${BACKENDURL}/auth/register`,
+            await api.post(
+                `/auth/register`,
                 { name, email, password, organization, role });
             setLoading(false);
             toast.success("Registration successful");

@@ -14,8 +14,6 @@ import TrackPlan from "./pages/TrackPlan";
 import Profile from "./pages/Profile";
 
 
-export const BACKENDURL = import.meta.env.VITE_BACKEND_URL
-
 function App() {
 
   return (

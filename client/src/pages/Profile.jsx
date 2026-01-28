@@ -1,6 +1,5 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { BACKENDURL } from '../App';
+import api from '../api/axios';
 
 export default function Profile() {
     const [profileData, setProfileData] = useState(null);
@@ -14,11 +13,7 @@ export default function Profile() {
     useEffect(() => {
         const fetchprofile = async () => {
             try {
-                const user = await axios.get(`${BACKENDURL}/auth/userinfo`, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
+                const user = await api.get(`/auth/userinfo`);
                 setProfileData(user.data.user);
                 setFormData({
                     name: user.data.user.name,
@@ -38,8 +33,8 @@ export default function Profile() {
     const handleSave = async () => {
         try {
             setLoading(true);
-            const res = await axios.put(
-                `${BACKENDURL}/auth/edituser`,
+            const res = await api.put(
+                `/auth/edituser`,
                 formData,
                 {
                     headers: {

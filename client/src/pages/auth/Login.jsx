@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import Loading from "../../components/Loading";
-import { BACKENDURL } from "../../App";
+import api from "../../api/axios";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -15,8 +14,8 @@ const Login = () => {
     const handleLogin = async () => {
         try {
             setLoading(true);
-            const response = await axios.post(
-                `${BACKENDURL}/auth/login`,
+            const response = await api.post(
+                `/auth/login`,
                 { email, password },
                 { withCredentials: true }
             );

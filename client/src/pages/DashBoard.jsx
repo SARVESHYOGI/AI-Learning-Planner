@@ -1,12 +1,11 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import GeneratedPlan from '../components/GeneratedPlan'
 import toast from 'react-hot-toast'
 import Loading from '../components/Loading'
-import { BACKENDURL } from '../App'
 import TimeCard from '../components/TimeCard'
+import api from '../api/axios'
 
 function DashBoard() {
     const [plans, setPlans] = useState([]);
@@ -18,7 +17,7 @@ function DashBoard() {
         const fetchTrackPlans = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${BACKENDURL}/track/trackplan`, {
+                const response = await api.get(`/track/trackplan`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                     },
@@ -51,7 +50,7 @@ function DashBoard() {
         console.log('Deleting plan with ID:', id);
         try {
             setLoading(true);
-            const response = await axios.delete(`${BACKENDURL}/plan/deleteplan/${id}`, {
+            const response = await api.delete(`/plan/deleteplan/${id}`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
@@ -73,7 +72,7 @@ function DashBoard() {
         console.log("added to tracking plan");
         try {
             console.log("tracking ", id);
-            const response = await axios.post(`${BACKENDURL}/track/trackplan/${id}`, {}, {
+            const response = await api.post(`/track/trackplan/${id}`, {}, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
@@ -98,7 +97,7 @@ function DashBoard() {
                 return;
             }
 
-            const response = await axios.get(`${BACKENDURL}/plan/getplan`, {
+            const response = await api.get(`/plan/getplan`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 

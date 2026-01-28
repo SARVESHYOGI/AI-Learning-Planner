@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import Card from "../components/Card";
 import { useSelector } from "react-redux";
-import axios from "axios";
 import Loading from "../components/Loading";
 import toast from "react-hot-toast";
-import { BACKENDURL } from "../App";
 import { Link } from "react-router-dom";
 import PlanPage from "./PlanPage";
+import api from "../api/axios";
 
 
 const Generatedplans = () => {
@@ -22,7 +20,7 @@ const Generatedplans = () => {
         return <div><Loading /></div>;
     }
 
-    const addplan = () => {
+    const addplan = async () => {
         setLoading(true);
         setError(null);
         setSuccess(false);
@@ -42,7 +40,7 @@ const Generatedplans = () => {
             plan: plan
         }
 
-        axios.post(`${BACKENDURL}/plan/saveplan`, paylod, {
+        await api.post(`/plan/saveplan`, paylod, {
             headers: {
                 Authorization: `Bearer ${token}`,
             }

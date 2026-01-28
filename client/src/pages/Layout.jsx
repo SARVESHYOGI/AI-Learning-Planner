@@ -1,7 +1,6 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';  // This will render the child routes
 import Sidebar from '../components/Sidebar';
-import StyledBackground from '../components/StyledBackground';
 
 const Layout = () => {
     return (

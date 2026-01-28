@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setPlan } from "../store/planSlice";
 import Loading from "../components/Loading";
 import toast from "react-hot-toast";
-import { BACKENDURL } from "../App";
 import { motion, AnimatePresence } from "framer-motion";
+import api from "../api/axios";
 
 const questionVariants = {
     enter: (direction) => ({ x: direction > 0 ? 100 : -100, opacity: 0 }),
@@ -50,8 +49,8 @@ const Questionnaire = () => {
 
         try {
             setFetchingForm(true);
-            const response = await axios.post(
-                `${BACKENDURL}/plan/generatequestion`,
+            const response = await api.post(
+                `/plan/generatequestion`,
                 { topic: topic.trim() },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -116,7 +115,7 @@ const Questionnaire = () => {
                 },
             };
             console.log(payload);
-            const response = await axios.post(`${BACKENDURL}/plan/generate-plan`, payload, {
+            const response = await api.post(`/plan/generate-plan`, payload, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             console.log(response);
