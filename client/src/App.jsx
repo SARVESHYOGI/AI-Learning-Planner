@@ -14,8 +14,7 @@ import TrackPlan from "./pages/TrackPlan";
 import Profile from "./pages/Profile";
 
 
-export const BACKENDURL = "http://localhost:5000";
-// export const BACKENDURL = "https://ai-powered-sql-prep.onrender.com";
+export const BACKENDURL = import.meta.env.VITE_BACKEND_URL
 
 function App() {
 
