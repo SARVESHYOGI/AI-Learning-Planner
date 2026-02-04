@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { MongoMemoryServer } = require("mongodb-memory-server");
+const rateLimiter = require("../middleware/rateLimiter");
 
 let mongo;
 
@@ -16,6 +17,7 @@ afterEach(async () => {
     for (let collection of collections) {
         await collection.deleteMany({});
     }
+    rateLimiter._clear();
 });
 
 afterAll(async () => {

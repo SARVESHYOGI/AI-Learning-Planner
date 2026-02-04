@@ -5,6 +5,9 @@ const rateLimiter = require("../middleware/rateLimiter");
 
 const router = express.Router();
 
+// router.post("/generate-plan", authMiddleware, generatePlan);
+// router.post("/generatequestion", authMiddleware, generateQuestion);
+
 router.post("/generate-plan", authMiddleware, rateLimiter({ max: 3, windowMs: 60_000 }), generatePlan);
 router.post("/generatequestion", authMiddleware, rateLimiter({ max: 3, windowMs: 60_000 }), generateQuestion);
 

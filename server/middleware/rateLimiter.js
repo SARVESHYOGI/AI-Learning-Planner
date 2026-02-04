@@ -89,5 +89,5 @@ function rateLimiter({ windowMs = 60_000, max = 5 } = {}) {
         next();
     };
 }
-
+rateLimiter._clear = () => buckets.clear();
 module.exports = rateLimiter;

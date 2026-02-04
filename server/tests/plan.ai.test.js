@@ -27,6 +27,7 @@ describe("AI plan Generator", () => {
     it("should generate questionnaire (public)", async () => {
         const res = await request(app)
             .post("/plan/generatequestion")
+            .set("Cookie", cookie)
             .send({ topic: "DSA" });
 
         expect(res.statusCode).toBe(200);

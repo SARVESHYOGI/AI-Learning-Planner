@@ -1,20 +1,20 @@
-const redis = require("redis");
+// const redis = require("redis");
 
-const client = redis.createClient();
-import { Redis } from '@upstash/redis'
-const redis = new Redis({
-    url: process.env.REDIS_URL,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN,
-})
+// const client = redis.createClient();
+// import { Redis } from '@upstash/redis'
+// const redis = new Redis({
+//     url: process.env.REDIS_URL,
+//     token: process.env.UPSTASH_REDIS_REST_TOKEN,
+// })
 
-await redis.set("foo", "bar");
-await redis.get("foo");
+// await redis.set("foo", "bar");
+// await redis.get("foo");
 
-client.on("error", err => console.error("Redis Error", err));
+// client.on("error", err => console.error("Redis Error", err));
 
-(async () => {
-    await client.connect();
-    await client.set("hello", "world");
-    console.log(await client.get("hello"));
-    process.exit();
-})();
+// (async () => {
+//     await client.connect();
+//     await client.set("hello", "world");
+//     console.log(await client.get("hello"));
+//     process.exit();
+// })();
