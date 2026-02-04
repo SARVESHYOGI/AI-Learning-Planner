@@ -9,7 +9,16 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+  
 
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
   backend:
     build:
       context: ./server
@@ -21,6 +30,7 @@ services:
       - ./server/.env.development
     depends_on:
       - mongo
+      - redis
     restart: unless-stopped
 
   frontend:
@@ -38,3 +48,4 @@ services:
 
 volumes:
   mongo-data:
+  redis-data:
