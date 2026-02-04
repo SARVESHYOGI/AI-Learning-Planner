@@ -66,21 +66,14 @@
 
 const buckets = new Map();
 
-export default function rateLimiter({
-    windowMs = 60_000,
-    max = 5
-} = {}) {
+function rateLimiter({ windowMs = 60_000, max = 5 } = {}) {
     return (req, res, next) => {
-        const key = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+        const key = req.ip;
         const now = Date.now();
 
-        if (!buckets.has(key)) {
-            buckets.set(key, []);
-        }
+        if (!buckets.has(key)) buckets.set(key, []);
 
         const timestamps = buckets.get(key);
-
-        // Remove old requests
         while (timestamps.length && timestamps[0] <= now - windowMs) {
             timestamps.shift();
         }
@@ -88,7 +81,7 @@ export default function rateLimiter({
         if (timestamps.length >= max) {
             return res.status(429).json({
                 success: false,
-                message: "Too many requests. Please try again later."
+                message: "Too many requests. Try later."
             });
         }
 
@@ -97,3 +90,4 @@ export default function rateLimiter({
     };
 }
 
+module.exports = rateLimiter;
