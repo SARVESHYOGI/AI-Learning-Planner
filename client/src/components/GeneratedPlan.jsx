@@ -39,7 +39,7 @@ function GeneratedPlan({ plans, deleteplan, trackplan }) {
                         <div>
                             <h3 className="text-lg font-bold">📘 Plan {index + 1}</h3>
                             <p className="text-slate-400 text-sm">
-                                {plan.subject} • {plan.planDuration} weeks
+                                {plan.subject} • {plan.planDuration} days
                             </p>
                         </div>
 
@@ -73,9 +73,9 @@ function GeneratedPlan({ plans, deleteplan, trackplan }) {
                         </AccordionSummary>
 
                         <AccordionDetails className="space-y-4">
-                            {plan.weeks.map((week) => (
+                            {plan.days.map((day) => (
                                 <Accordion
-                                    key={week.weekNumber}
+                                    key={day.dayNumber}
                                     sx={{
                                         backgroundColor: "rgba(30,41,59,0.7)",
                                         border: "1px solid rgba(148,163,184,0.2)",
@@ -86,17 +86,17 @@ function GeneratedPlan({ plans, deleteplan, trackplan }) {
                                 >
                                     <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}>
                                         <div className="flex justify-between w-full">
-                                            <span>Week {week.weekNumber}</span>
-                                            <DifficultyBadge level={week.difficultyLevel} />
+                                            <span>Day {day.dayNumber}</span>
+                                            <DifficultyBadge level={day.difficultyLevel} />
                                         </div>
                                     </AccordionSummary>
 
                                     <AccordionDetails>
                                         <ul className="text-sm text-slate-300 space-y-2">
-                                            <li><strong>Topics:</strong> {week.topicsCovered.join(", ")}</li>
-                                            <li><strong>Exercises:</strong> {week.exercises.join(", ")}</li>
-                                            <li><strong>Time:</strong> {week.timeCommitment}</li>
-                                            <li><strong>Resources:</strong> {week.resources.join(", ")}</li>
+                                            <li><strong>Topics:</strong> {day.topicsCovered.join(", ")}</li>
+                                            <li><strong>Exercises:</strong> {day.exercises.join(", ")}</li>
+                                            <li><strong>Time:</strong> {day.timeCommitment}</li>
+                                            <li><strong>Resources:</strong> {day.resources.join(", ")}</li>
                                         </ul>
                                     </AccordionDetails>
                                 </Accordion>

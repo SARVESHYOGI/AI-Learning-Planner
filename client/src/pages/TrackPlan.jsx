@@ -5,11 +5,16 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import api from '../api/axios';
+import { Snackbar } from "@mui/material";
+
 
 const TrackPlan = () => {
     const [trackPlans, setTrackPlans] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [toastOpen, setToastOpen] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
+
 
     useEffect(() => {
         const fetchTrackPlans = async () => {
@@ -40,49 +45,43 @@ const TrackPlan = () => {
         fetchTrackPlans();
     }, []);
 
-    const handleCompletionChange = async (planId, weekNumber, isCompleted) => {
-        try {
-            console.log("Updating completion:", planId, weekNumber, isCompleted);
-            await api.patch(`/track/updateCompletion`, {
-                planId,
-                weekNumber,
-                isCompleted
-            }, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
+    const handleCompletionChange = async (planId, dayNumber, isCompleted) => {
+        const res = await api.patch(
+            "/track/updateCompletion",
+            { planId, dayNumber, isCompleted },
+            { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        );
 
-            setTrackPlans(prev =>
-                prev.map(trackPlan => {
-                    if (trackPlan.plan?._id === planId) {
-                        return {
-                            ...trackPlan,
-                            plan: {
-                                ...trackPlan.plan,
-                                weeks: trackPlan.plan.weeks.map(week =>
-                                    week.weekNumber === weekNumber
-                                        ? { ...week, isCompleted }
-                                        : week
-                                ),
-                            },
-                        };
-                    }
-                    return trackPlan;
-                })
-            );
-        } catch (err) {
-            console.error("Update failed:", err);
-            alert(`Update failed: ${err.response?.data?.message || err.message}`);
+        if (res.data.notification) {
+            setToastMessage(res.data.notification);
+            setToastOpen(true);
         }
+
+
+        setTrackPlans(prev =>
+            prev.map(tp =>
+                tp.plan._id === planId
+                    ? {
+                        ...tp,
+                        plan: {
+                            ...tp.plan,
+                            days: tp.plan.days.map(d =>
+                                d.dayNumber === dayNumber
+                                    ? { ...d, isCompleted }
+                                    : d
+                            ),
+                        },
+                    }
+                    : tp
+            )
+        );
     };
 
-
-    const renderWeek = (planId, weekData, index) => {
-        if (!weekData) return null;
+    const renderDay = (planId, dayData, index) => {
+        if (!dayData) return null;
 
         return (
-            <Accordion key={`week-${index}`} sx={{
+            <Accordion key={`day-${index}`} sx={{
                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
                 borderRadius: '8px',
@@ -96,23 +95,23 @@ const TrackPlan = () => {
                 >
                     <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                         <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#ffffff' }}>
-                            Week {weekData.weekNumber}
+                            Day {dayData.dayNumber}
                         </Typography>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                             <Typography variant="body2" sx={{ color: '#bbbbbb' }}>
-                                Difficulty: <span style={{ color: '#fff' }}>{weekData.difficultyLevel}</span>
+                                Difficulty: <span style={{ color: '#fff' }}>{dayData.difficultyLevel}</span>
                             </Typography>
 
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        checked={weekData.isCompleted || false}
+                                        checked={dayData.isCompleted || false}
                                         onChange={(e) => {
                                             e.stopPropagation();
                                             handleCompletionChange(
                                                 planId,
-                                                weekData.weekNumber,
+                                                dayData.dayNumber,
                                                 Boolean(e.target.checked)
                                             );
                                         }}
@@ -132,25 +131,25 @@ const TrackPlan = () => {
                     color: '#ffffff'
                 }}>
                     <Typography variant="body1">
-                        <strong style={{ color: '#bbbbbb' }}>Topics:</strong> {weekData.topicsCovered.join(', ')}
+                        <strong style={{ color: '#bbbbbb' }}>Topics:</strong> {dayData.topicsCovered.join(', ')}
                     </Typography>
 
                     <Typography variant="body1">
-                        <strong style={{ color: '#bbbbbb' }}>Exercises:</strong> {weekData.exercises.join(', ')}
+                        <strong style={{ color: '#bbbbbb' }}>Exercises:</strong> {dayData.exercises.join(', ')}
                     </Typography>
 
                     <Typography variant="body1">
-                        <strong style={{ color: '#bbbbbb' }}>Time Commitment:</strong> {weekData.timeCommitment}
+                        <strong style={{ color: '#bbbbbb' }}>Time Commitment:</strong> {dayData.timeCommitment}
                     </Typography>
 
                     <Typography variant="body1">
                         <strong style={{ color: '#bbbbbb' }}>Resources:</strong>
-                        {weekData.resources.map((r, i) => (
+                        {dayData.resources.map((r, i) => (
                             <span key={i}>
                                 <a href={r} target="_blank" rel="noopener noreferrer" style={{ color: '#4caf50' }}>
                                     {r}
                                 </a>
-                                {i < weekData.resources.length - 1 ? ', ' : ''}
+                                {i < dayData.resources.length - 1 ? ', ' : ''}
                             </span>
                         ))}
                     </Typography>
@@ -158,8 +157,6 @@ const TrackPlan = () => {
             </Accordion >
         );
     };
-
-
 
     if (loading) return (
         <div style={{
@@ -204,6 +201,21 @@ const TrackPlan = () => {
             maxWidth: '1200px',
             margin: '0 auto'
         }}>
+            <Snackbar
+                open={toastOpen}
+                autoHideDuration={3000}
+                onClose={() => setToastOpen(false)}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+                <Alert
+                    severity="success"
+                    onClose={() => setToastOpen(false)}
+                    sx={{ backgroundColor: "#2e7d32", color: "#fff", fontWeight: 600 }}
+                >
+                    {toastMessage}
+                </Alert>
+            </Snackbar>
+
             <Typography variant="h4" sx={{
                 fontWeight: 700,
                 color: '#ffffff',
@@ -242,7 +254,7 @@ const TrackPlan = () => {
                         </Typography>
                         <div style={{ display: 'flex', gap: '16px' }}>
                             <Typography variant="body2" sx={{ color: '#bbbbbb' }}>
-                                <span style={{ fontWeight: 600 }}>Plan Duration:</span> {trackPlan.plan?.planDuration || 'N/A'} weeks
+                                <span style={{ fontWeight: 600 }}>Plan Duration:</span> {trackPlan.plan?.planDuration || 'N/A'} days
                             </Typography>
                         </div>
                     </AccordionSummary>
@@ -261,10 +273,10 @@ const TrackPlan = () => {
                                         paddingBottom: '8px',
                                         borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
                                     }}>
-                                        {trackPlan.plan.weeks.length}-week Plan
+                                        {trackPlan.plan.days.length}-days Plan
                                     </Typography>
-                                    {trackPlan.plan.weeks?.map((weekData, index) =>
-                                        renderWeek(trackPlan.plan._id, weekData, index)
+                                    {trackPlan.plan.days?.map((dayData, index) =>
+                                        renderDay(trackPlan.plan._id, dayData, index)
                                     )}
 
 

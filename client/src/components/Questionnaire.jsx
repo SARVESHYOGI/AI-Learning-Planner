@@ -64,9 +64,9 @@ const Questionnaire = () => {
 
             const planDurationField = {
                 name: "userPlanDuration",
-                label: "How long do you want your learning plan to be? (e.g., 4 for weeks, 2 for weeks)",
+                label: "How long do you want your learning plan to be? (e.g., 4 for days, 2 for days)",
                 type: "text",
-                placeholder: "Enter duration in weeks",
+                placeholder: "Enter duration in days",
                 required: true
             };
             setFormFields([...fields, planDurationField]);

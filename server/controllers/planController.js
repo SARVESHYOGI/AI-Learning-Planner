@@ -44,6 +44,9 @@ const generator = async (prompt) => {
   // const generatedText = ollamaData.response;
   // const cleanedText = generatedText.replace(/```json\n|\n```/g, '').replace(/```/g, "").trim();;
   // const jsonData = JSON.parse(cleanedText);
+
+
+
   return jsonData;
 }
 
@@ -134,15 +137,15 @@ ${userQuestionAnswerResponse}
 {
   "submittedInformation": { /* here key:value pair should be subject: "${topic}" */ },
   "plan": {
-    "week1": { "topicsCovered": [...], "exercises": [...], "difficultyLevel":"", "timeCommitment":"", "resources":[...] },
-    "week2": { ... },
+    "day1": { "topicsCovered": [...], "exercises": [...], "difficultyLevel":"", "timeCommitment":"", "resources":[...] },
+    "day2": { ... },
     ...
-    "weekN": { ... }
+    "dayN": { ... }
   }
 }
-3. 3. Create EXACTLY ${duration} weeks.
-- If you generate more than ${duration} weeks, the response is INVALID.
-- Do NOT create week${duration + 1} or beyond.
+3. 3. Create EXACTLY ${duration} days.
+- If you generate more than ${duration} days, the response is INVALID.
+- Do NOT create day${duration + 1} or beyond.
 4. Tailor topics, exercises and resources to the subject and user's proficiency.
 5. For resources include at least 1 free tutorial or platform name as a STRING
    (e.g., "LeetCode", "GeeksforGeeks", "freeCodeCamp", "Official Docs").
@@ -170,14 +173,14 @@ Return the JSON now.
 // Check if result is properly returned and extract text
 
 
-function transformPlanToWeeks(planObject) {
-  return Object.entries(planObject).map(([weekKey, weekData], index) => ({
-    weekNumber: index + 1,
-    topicsCovered: weekData.topicsCovered || [],
-    exercises: weekData.exercises || [],
-    difficultyLevel: weekData.difficultyLevel || "Beginner",
-    timeCommitment: weekData.timeCommitment || "",
-    resources: weekData.resources || [],
+function transformPlanToDays(planObject) {
+  return Object.entries(planObject).map(([dayKey, dayData], index) => ({
+    dayNumber: index + 1,
+    topicsCovered: dayData.topicsCovered || [],
+    exercises: dayData.exercises || [],
+    difficultyLevel: dayData.difficultyLevel || "Beginner",
+    timeCommitment: dayData.timeCommitment || "",
+    resources: dayData.resources || [],
     isCompleted: false,
   }));
 }
@@ -196,19 +199,19 @@ const savePlan = async (req, res) => {
     }
 
     const submittedInformation = generatedPlan.plan.submittedInformation;
-    const weekPlanObject = generatedPlan.plan.plan;
+    const dayPlanObject = generatedPlan.plan.plan;
 
-    if (!submittedInformation || !weekPlanObject) {
+    if (!submittedInformation || !dayPlanObject) {
       return res.status(400).json({ error: "Missing submittedInformation or plan" });
     }
 
-    const weeksArray = transformPlanToWeeks(weekPlanObject);
+    const daysArray = transformPlanToDays(dayPlanObject);
 
     const newPlan = new Plan({
       userId,
       subject: submittedInformation.subject || "General",
-      planDuration: weeksArray.length,
-      weeks: weeksArray,
+      planDuration: daysArray.length,
+      days: daysArray,
     });
 
     const savedPlan = await newPlan.save();

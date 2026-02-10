@@ -1,6 +1,7 @@
 const dotenv = require("dotenv");
 const connectDB = require("./db/connectDB");
 const app = require("./app");
+require("./emails/streakMissedReminder.js");
 
 dotenv.config();
 

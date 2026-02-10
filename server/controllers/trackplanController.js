@@ -1,6 +1,9 @@
 const TrackPlan = require("../models/TrackPlan");
 const Plan = require("../models/Plan");
 const mongoose = require("mongoose");
+const { sendEmail } = require("../services/mailService");
+const { streakCompletedTemplate } = require("../emails/streakCompleted");
+
 
 const addtotrackplan = async (req, res) => {
     try {
@@ -60,41 +63,123 @@ const gettrackplan = async (req, res) => {
     }
 }
 
+
+const isSameDay = (d1, d2) => {
+    return (
+        d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate()
+    );
+};
+
+const isYesterday = (lastDate, today) => {
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    return isSameDay(lastDate, yesterday);
+};
+
+
+
 const updateCompletion = async (req, res) => {
     try {
-        const { planId, weekNumber, isCompleted } = req.body;
+        const { planId, dayNumber, isCompleted } = req.body;
 
-        if (!planId || !weekNumber || typeof isCompleted !== 'boolean') {
-            return res.status(400).json({ message: 'planId, weekNumber, and isCompleted are required' });
+        if (!planId || !dayNumber || typeof isCompleted !== "boolean") {
+            return res.status(400).json({
+                message: "planId, dayNumber, and isCompleted are required",
+            });
         }
 
-        const updatedPlan = await Plan.findOneAndUpdate(
-            { _id: planId, "weeks.weekNumber": weekNumber },
-            {
-                $set: {
-                    "weeks.$.isCompleted": isCompleted
-                }
-            },
-            { new: true }
-        );
+        const plan = await Plan.findById(planId).populate("userId", "email");
+        if (!plan) {
+            return res.status(404).json({ message: "Plan not found" });
+        }
 
-        if (!updatedPlan) {
-            return res.status(404).json({ message: "Plan or week not found" });
+        const day = plan.days.find(d => d.dayNumber === dayNumber);
+        if (!day) {
+            return res.status(404).json({ message: "Day not found" });
+        }
+
+        // update day
+        day.isCompleted = isCompleted;
+
+        // check completion
+        const allDaysCompleted = plan.days.every(d => d.isCompleted === true);
+        if (allDaysCompleted) {
+            plan.status = "completed";
+        }
+
+        // 🔒 STOP streak updates if plan already completed
+        if (plan.status === "completed") {
+            await plan.save();
+            return res.status(200).json({
+                message: "Plan completed 🎉",
+                notification: "🎉 You’ve completed the entire plan!",
+                plan,
+            });
+        }
+
+        const today = new Date();
+        let notification = null;
+        let streakUpdated = false;
+
+        if (isCompleted) {
+            if (!plan.lastActivityDate) {
+                plan.dailyStreak = 1;
+                streakUpdated = true;
+            } else if (isSameDay(plan.lastActivityDate, today)) {
+                notification =
+                    "ℹ️ Day completed! Today already counted for streak 🔥";
+            } else if (isYesterday(plan.lastActivityDate, today)) {
+                plan.dailyStreak += 1;
+                streakUpdated = true;
+            } else {
+                plan.dailyStreak = 1;
+                streakUpdated = true;
+            }
+
+            if (streakUpdated) {
+                plan.lastActivityDate = today;
+                plan.longestStreak = Math.max(
+                    plan.longestStreak,
+                    plan.dailyStreak
+                );
+
+                notification =
+                    plan.dailyStreak === 1
+                        ? "✅ Day 1 completed! Great start"
+                        : `🔥 ${plan.dailyStreak}-day streak! Keep going`;
+            }
+        }
+
+        await plan.save();
+
+        // send email only when streak changes
+        if (streakUpdated) {
+            sendEmail({
+                to: plan.userId.email,
+                subject: `🔥 ${plan.dailyStreak}-Day Learning Streak!`,
+                html: streakCompletedTemplate(plan.dailyStreak),
+            }).catch(console.error);
         }
 
         res.status(200).json({
-            message: "Week completion updated successfully",
-            updatedPlan
+            message: "Day updated successfully",
+            dailyStreak: plan.dailyStreak,
+            notification,
+            plan,
         });
 
     } catch (error) {
         console.error("Error updating completion:", error);
         res.status(500).json({
             message: "Internal server error",
-            error: error.message
+            error: error.message,
         });
     }
 };
+
+
 
 
 

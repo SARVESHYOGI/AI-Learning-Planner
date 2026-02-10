@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
-const weekSchema = new mongoose.Schema(
+const daySchema = new mongoose.Schema(
     {
-        weekNumber: {
+        dayNumber: {
             type: Number,
             required: true,
         },
@@ -38,8 +38,8 @@ const planSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
-        weeks: {
-            type: [weekSchema],
+        days: {
+            type: [daySchema],
             required: true,
         },
 
@@ -48,6 +48,31 @@ const planSchema = new mongoose.Schema(
             enum: ["incomplete", "completed"],
             default: "incomplete",
         },
+        dailyStreak: {
+            type: Number,
+            default: 0,
+        },
+
+        lastActivityDate: {
+            type: Date,
+            default: null,
+        },
+
+        longestStreak: {
+            type: Number,
+            default: 0,
+        },
+
+        streakNotifiedForDate: {
+            type: Date,
+            default: null,
+        },
+        streakMissedNotifiedAt: {
+            type: Date,
+            default: null,
+        }
+
+
     },
     { timestamps: true }
 );

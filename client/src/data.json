@@ -3,7 +3,7 @@
         "subject": "sql"
     },
     "plan": {
-        "week1": {
+        "day 1": {
             "topicsCovered": [
                 "Introduction to Databases and SQL",
                 "Basic SELECT Statement",
@@ -22,14 +22,14 @@
                 "Calculate total, average, min, max for numeric columns."
             ],
             "difficultyLevel": "Intermediate",
-            "timeCommitment": "5-7 hours/week",
+            "timeCommitment": "5-7 hours/day ",
             "resources": [
                 "freeCodeCamp: Relational Database Course (SQL)",
                 "W3Schools SQL Tutorial: Basic Queries",
                 "SQLBolt: Lessons 1-6"
             ]
         },
-        "week2": {
+        "day 2": {
             "topicsCovered": [
                 "Understanding Table Relationships (Primary/Foreign Keys)",
                 "INNER JOIN",
@@ -46,14 +46,14 @@
                 "Combine results of multiple SELECT statements."
             ],
             "difficultyLevel": "Intermediate",
-            "timeCommitment": "5-7 hours/week",
+            "timeCommitment": "5-7 hours/day ",
             "resources": [
                 "Mode Analytics SQL Tutorial: Joins",
                 "GeeksforGeeks: SQL Joins",
                 "SQLZoo: Join Tutorial"
             ]
         },
-        "week3": {
+        "day 3": {
             "topicsCovered": [
                 "Subqueries (Scalar, Multi-row, Correlated)",
                 "Subqueries in SELECT, FROM, WHERE, HAVING clauses",
@@ -68,14 +68,14 @@
                 "Create views to simplify complex queries and control access."
             ],
             "difficultyLevel": "Intermediate",
-            "timeCommitment": "5-7 hours/week",
+            "timeCommitment": "5-7 hours/day ",
             "resources": [
                 "PostgreSQL Official Documentation: Subqueries & CTEs",
                 "HackerRank: SQL (Intermediate challenges)",
                 "SQL Fiddle: Experiment with DML"
             ]
         },
-        "week4": {
+        "day 4": {
             "topicsCovered": [
                 "Window Functions (ROW_NUMBER, RANK, DENSE_RANK, NTILE)",
                 "LAG, LEAD (Accessing previous/next rows)",
@@ -92,7 +92,7 @@
                 "Simulate transactions and understand their impact."
             ],
             "difficultyLevel": "Intermediate",
-            "timeCommitment": "5-7 hours/week",
+            "timeCommitment": "5-7 hours/day ",
             "resources": [
                 "SQL Bolt: Window Functions",
                 "Official Database Documentation (e.g., MySQL, PostgreSQL, SQL Server) on Indexes and Window Functions",
