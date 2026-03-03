@@ -22,30 +22,67 @@ const generator = async (prompt) => {
   const generatedText = await result.text;
   const cleanedText = generatedText.replace(/```json\n|\n```/g, '');
   const jsonData = JSON.parse(cleanedText);
+  return jsonData;
 
   /*{ }*/
 
   // LOCAL
 
-  // const ollamaRes = await fetch("http://localhost:11434/api/generate", {
-  //   method: "POST",
-  //   headers: { "Content-Type": "application/json" },
-  //   body: JSON.stringify({
-  //     model: "phi3",
-  //     prompt,
-  //     stream: false
-  //   })
-  // });
-  // const ollamaData = await ollamaRes.json();
-  // console.log("Raw Ollama result:", ollamaData);
-  // if (!ollamaData || typeof ollamaData.response !== "string") {
-  //   throw new Error("No valid response from Ollama");
-  // }
-  // const generatedText = ollamaData.response;
-  // const cleanedText = generatedText.replace(/```json\n|\n```/g, '').replace(/```/g, "").trim();;
-  // const jsonData = JSON.parse(cleanedText);
-  return jsonData;
-}
+  //   const ollamaRes = await fetch("http://localhost:11434/api/generate", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({
+  //       model: "phi3",
+  //       prompt,
+  //       stream: false,
+  //       format: "json"
+  //     })
+  //   });
+
+  //   const ollamaData = await ollamaRes.json();
+  //   if (!ollamaData || typeof ollamaData.response !== "string") {
+  //     throw new Error("No valid response from Ollama");
+  //   }
+
+  //   let rawOutput = ollamaData.response.trim();
+
+  //   try {
+  //     return JSON.parse(rawOutput);
+  //   } catch (e) {
+  //     const repairPrompt = `
+  // You are a JSON formatter.
+  // The following content is intended to be valid JSON but may contain errors.
+  // DO NOT change meaning.
+  // DO NOT add new fields.
+  // DO NOT remove fields.
+  // ONLY fix formatting issues and return valid JSON.
+  // Return ONLY valid JSON.
+
+  // CONTENT:
+  // ${rawOutput}
+  // `;
+
+  //     const repairRes = await fetch("http://localhost:11434/api/generate", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         model: "phi3",
+  //         prompt: repairPrompt,
+  //         stream: false,
+  //         format: "json"
+  //       })
+  //     });
+
+  //     const repairData = await repairRes.json();
+  //     if (!repairData || typeof repairData.response !== "string") {
+  //       throw new Error("No valid repair response from Ollama");
+  //     }
+  //     // const cleanedText = generatedText.replace(/```json\n|\n```/g, '');
+
+  //     const cleanedText = repairData.response.trim();
+  //     return JSON.parse(cleanedText);
+  //   }
+};
 
 const generateQuestion = async (req, res) => {
   try {

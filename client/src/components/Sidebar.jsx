@@ -36,14 +36,14 @@ export default function Sidebar() {
 
     const listItems = [
         { text: 'Home', icon: <HomeIcon />, href: "/" },
-        isLoggedIn && { text: 'profile', icon: <ProfileIcon />, href: "/profile" },
-        !isLoggedIn && { text: 'login', icon: <LoginIcon />, href: "/auth/login" },
-        !isLoggedIn && { text: 'register', icon: <AppRegistrationIcon />, href: "/auth/register" },
-        isLoggedIn && { text: 'dashboard', icon: <DashboardIcon />, href: "/dashboard" },
-        isLoggedIn && { text: 'generate plan', icon: <QuizIcon />, href: "/questionnaire" },
-        isLoggedIn && { text: 'generated plans', icon: <TipsAndUpdatesIcon />, href: "/generatedplans" },
-        isLoggedIn && { text: 'trackingplan', icon: <TipsAndUpdatesIcon />, href: "/trackingplan" },
-        isLoggedIn && { text: 'logout', icon: <LogoutIcon />, onClick: logout },
+        isLoggedIn && { text: 'Profile', icon: <ProfileIcon />, href: "/profile" },
+        !isLoggedIn && { text: 'Login', icon: <LoginIcon />, href: "/auth/login" },
+        !isLoggedIn && { text: 'Register', icon: <AppRegistrationIcon />, href: "/auth/register" },
+        isLoggedIn && { text: 'Dashboard', icon: <DashboardIcon />, href: "/dashboard" },
+        isLoggedIn && { text: 'Generate plan', icon: <QuizIcon />, href: "/questionnaire" },
+        isLoggedIn && { text: 'Last plan', icon: <TipsAndUpdatesIcon />, href: "/generatedplans" },
+        isLoggedIn && { text: 'My Tracked Plans', icon: <TipsAndUpdatesIcon />, href: "/trackingplan" },
+        isLoggedIn && { text: 'Logout', icon: <LogoutIcon />, onClick: logout },
     ];
 
     const filteredListItems = listItems.filter(Boolean);

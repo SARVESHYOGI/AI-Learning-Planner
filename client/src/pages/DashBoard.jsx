@@ -153,12 +153,19 @@ function DashBoard() {
                             Manage and track your personalized study plans
                         </p>
                     </div>
+                    <div className='flex md:block'>
+                        <Link to="/trackingplan" className="px-1">
+                            <button className="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-xl font-semibold shadow-lg transition transform hover:scale-105">
+                                🢅 Go to Track Plan
+                            </button>
+                        </Link>
+                        <Link to="/questionnaire" className="px-1">
+                            <button className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl font-semibold shadow-lg transition transform hover:scale-105">
+                                ➕ Create New Plan
+                            </button>
+                        </Link>
+                    </div>
 
-                    <Link to="/questionnaire">
-                        <button className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl font-semibold shadow-lg transition transform hover:scale-105">
-                            ➕ Create New Plan
-                        </button>
-                    </Link>
                 </div>
 
                 {/* Stats */}
